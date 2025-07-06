@@ -1,0 +1,2 @@
+class ProxmoxMachine():
+    pass

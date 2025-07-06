@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
 
 class MachineManager(ABC):
-    pass
-    # @abstractmethod
-    # def create_vm(self, name: str, cpu: int, memory: int) -> str:
-    #     pass
+    @abstractmethod
+    def create_machine(self, name, cpu, memory, harddrive):
+        """
+        Create a virtual machine with the specified parameters.
 
-    # @abstractmethod
-    # def delete_vm(self, vm_id: str) -> bool:
-    #     pass
-
-    # @abstractmethod
-    # def list_vms(self) -> list[dict]:
-    #     pass
+        :param name: Name of the virtual machine.
+        :param cpu: Number of CPU cores for the VM.
+        :param memory: Amount of memory (RAM) for the VM in MB.
+        :param harddrive: Size of the hard drive for the VM in GB.
+        :return: ID of the created VM.
+        """
+        pass
