@@ -8,7 +8,8 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "proxmoxer (>=2.2.0,<3.0.0)"
+    "proxmoxer (>=2.2.0,<3.0.0)",
+    "typer (>=0.16.0,<0.17.0)"
 ]
 
 [tool.poetry]
