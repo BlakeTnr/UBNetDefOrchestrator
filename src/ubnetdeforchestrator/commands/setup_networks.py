@@ -36,6 +36,18 @@ def get_adapters_missing_bridges(ethWithComments: list, existingBridges: list):
 
     return adaptersMissingBridges
 
+def vlan_from_bridge_name(bridgeName):
+    match bridgeName:
+        case "coreblue":
+            return 2
+        case "corered":
+            return 3
+        case "io":
+            return 4
+        case _:
+            raise Exception(f"Unkown vlan for {bridgeName}")
+
+
 def create_missing_bridges(node, adapters_missing_bridges: list):
     proxmoxInstance = Proxmox.get_proxmox_instance()
     nodeName = node['node']
@@ -47,14 +59,17 @@ def create_missing_bridges(node, adapters_missing_bridges: list):
         if(bridgeName == "management"):
             continue
 
+        vlanID = vlan_from_bridge_name(bridgeName)
+
         proxmoxInstance.nodes(nodeName).network.create(
             iface=bridgeName,
             type="bridge",
             node=nodeName,
             bridge_vlan_aware=1,
             autostart=1,
-            bridge_ports=slave
+            bridge_ports=f"{slave}.{vlanID}"
         )
+        print(f":white_check_mark: created {bridgeName} bound to {slave}.{vlanID} on {nodeName}")
 
 @app.callback(invoke_without_command=True)
 def setupnetworks_callback(host, username, password, realm="pve"):
@@ -74,5 +89,3 @@ def setupnetworks_callback(host, username, password, realm="pve"):
         adaptersMissingBridges = get_adapters_missing_bridges(ethWithComments, existingBridges)
 
         create_missing_bridges(node, adaptersMissingBridges)
-
-    typer.echo("Callback working!fggg")
