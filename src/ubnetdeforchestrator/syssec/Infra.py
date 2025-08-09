@@ -11,3 +11,7 @@ class Infra(ABC):
     @abstractmethod
     def createTeam(team: Team):
         pass
+
+    @abstractmethod
+    def assignStudentToTeam(student: Student, team: Team):
+        pass
