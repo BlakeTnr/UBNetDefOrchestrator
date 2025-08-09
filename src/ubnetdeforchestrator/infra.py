@@ -1,8 +1,6 @@
 from proxmoxer import ProxmoxAPI
 import proxmoxer
 import typer
-from ProxmoxSysSecStudent import ProxmoxSysSecStudent
-from ProxmoxSysSecTeam import ProxmoxSysSecTeam
 
 proxmox: ProxmoxAPI
 
