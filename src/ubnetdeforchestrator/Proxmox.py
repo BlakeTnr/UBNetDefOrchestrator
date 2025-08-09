@@ -3,7 +3,7 @@ import typer
 
 proxmox: proxmoxer.ProxmoxAPI = None
 
-def get_proxmox_instance(host, username, password, realm="pve") -> proxmoxer.ProxmoxAPI:
+def get_proxmox_instance(host="", username="", password="", realm="pve") -> proxmoxer.ProxmoxAPI:
     global proxmox
 
     if not proxmox:
