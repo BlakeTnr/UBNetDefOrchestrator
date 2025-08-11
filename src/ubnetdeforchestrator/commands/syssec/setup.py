@@ -4,21 +4,21 @@ import proxmoxer
 from rich import print
 from rich.prompt import Confirm
 import sys
+from syssec.Team import Team
 from ubnetdeforchestrator.ProxmoxInfra import ProxmoxInfra
 
 app = typer.Typer()
 
 @app.callback(invoke_without_command=True)
-def teardown_callback(host, username, password, realm="pve"):
-    confirmed = Confirm.ask(":warning:  This is irreversible! This will delete all of syssec. Are you sure?")
+def setup_callback(host, username, password, number_of_teams, realm="pve"):
+    confirmed = Confirm.ask(":warning:  This will not teardown any existing teams")
     if not confirmed:
         print("Cancelled")
         sys.quit(1)
 
     infra = ProxmoxInfra(host, username, password, realm)
     
-    teams = infra.getTeams()
-    
-    for team in teams:
-        infra.deleteTeam(team)
-        print(f"Deleted team {team.team_number}")
+    for i in range(1, int(number_of_teams)+1):
+        team = Team(i)
+        infra.createTeam(team)
+        print(f":white_check_mark: Created team {i}!")
