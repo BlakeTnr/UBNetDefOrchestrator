@@ -25,9 +25,9 @@ class ProxmoxInfra(Infra):
             print(f"Creating {poolid}")
 
     def _create_hidden_pool(self, team: Team):
-        poolid = f"SysSecTeam{team.team_number}"
+        poolid = f"SysSecTeam{team.team_number}_hidden"
 
-        if(self.team_number <= 9):
+        if(team.team_number <= 9):
             poolid = f"SysSecTeam0{team.team_number}_hidden"
             
         self.proxmox.pools.create(poolid=poolid)
