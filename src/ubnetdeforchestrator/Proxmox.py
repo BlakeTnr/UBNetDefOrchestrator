@@ -8,7 +8,7 @@ def get_proxmox_instance(host="", username="", password="", realm="pve") -> prox
 
     if not proxmox:
         try:
-            proxmox = proxmoxer.ProxmoxAPI(host, user=f'{username}@{realm}', password=password, verify_ssl=False)
+            proxmox = proxmoxer.ProxmoxAPI(host, user=f'{username}@{realm}', password=password, verify_ssl=False, timeout=None)
         except proxmoxer.AuthenticationError:
             print("Username or password were incorrect!")
 

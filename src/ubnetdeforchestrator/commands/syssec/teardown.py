@@ -20,5 +20,8 @@ def teardown_callback(host, username, password, realm="pve"):
     teams = infra.getTeams()
     
     for team in teams:
-        infra.deleteTeam(team)
-        print(f"Deleted team {team.team_number}")
+        try:
+            infra.deleteTeam(team)
+            print(f"Deleted team {team.team_number}")
+        except Exception as e:
+            print(f"Couldn't delete team {team.team_number} because {e}")
