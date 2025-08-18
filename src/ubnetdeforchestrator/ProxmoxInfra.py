@@ -12,8 +12,8 @@ class ProxmoxInfra(Infra):
             print(":x: Username or password were incorrect!")
             quit()
 
-    def createStudent(self, student: Student):
-        self.proxmox.access.users.create(userid=f"{self.identifier}@pve")
+    def createStudent(self, student: Student, password: str=None):
+        self.proxmox.access.users.create(userid=f"{self.identifier}@pve", password=password)
 
     def _create_pool(self, team: Team):
             poolid = f"SysSecTeam{team.team_number}"
