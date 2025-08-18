@@ -22,7 +22,9 @@ def load_students_callback(host, username, password, csvPath, realm="pve"):
     for teamStudentMapping in teamStudentMappings:
         team = teamStudentMapping[0]
         student = teamStudentMapping[1]
-        infra.createStudent(student)
+        password = generate_password()
+        infra.createStudent(student, password)
+        
         infra.assignStudentToTeam(student, team)
 
 def process_team_csv(csv_path: str) -> list[int, Student]:
