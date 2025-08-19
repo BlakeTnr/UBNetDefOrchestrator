@@ -12,8 +12,8 @@ class ProxmoxInfra(Infra):
             print(":x: Username or password were incorrect!")
             quit()
 
-    def createStudent(self, student: Student):
-        self.proxmox.access.users.create(userid=f"{self.identifier}@pve")
+    def createStudent(self, student: Student, password: str=None):
+        self.proxmox.access.users.create(userid=f"{self.identifier}@pve", password=password)
 
     def _create_pool(self, team: Team):
             poolid = f"SysSecTeam{team.team_number}"
@@ -60,15 +60,18 @@ class ProxmoxInfra(Infra):
         self.proxmox.pools(f"SysSecTeam{team.team_number}_hidden").delete()
 
     def _get_student(self, student: Student):
-        student = self.proxmox.access.users(f"{student.identifier}@pve")
+        student = self.proxmox.access.users(f"{student.identifier}@pve").get()
         return student
     
     def _get_team(self, team: Team):
-        pool = self.proxmox.pools(f"SysSecTeam{team.team_number}").get()
+        pool = self.proxmox.pools(f"SysSecTeam{team.team_number if team.team_number > 10 else '0' + str(team.team_number)}").get()
         return pool
 
     def assignStudentToTeam(self, student: Student, team: Team):
-        proxmoxUser = self._get_student(student)
         proxmoxTeam = self._get_team(team)
-        
-        raise Exception("Assign student to team function not finished")
+
+        self.proxmox.access.acl.put(
+            path=f"/pool/SysSecTeam{team.team_number if team.team_number > 10 else '0' + str(team.team_number)}",   # path to pool
+            users=f"{student.identifier}@pve",       # user
+            roles="SysSec"      # role to assign
+        )

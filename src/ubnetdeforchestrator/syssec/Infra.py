@@ -5,7 +5,7 @@ from syssec import Team
 
 class Infra(ABC):
     @abstractmethod
-    def createStudent(student: Student):
+    def createStudent(student: Student, password: str=None):
         pass
 
     @abstractmethod

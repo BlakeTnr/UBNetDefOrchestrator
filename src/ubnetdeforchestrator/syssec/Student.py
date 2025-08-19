@@ -1,3 +1,3 @@
 class Student:
     def __init__(self, identifier: str):
-        self.identifier = identifier
+        self.identifier = identifier # E.g. UBIT
