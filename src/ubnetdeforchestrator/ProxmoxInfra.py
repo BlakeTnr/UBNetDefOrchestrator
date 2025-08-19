@@ -42,7 +42,7 @@ class ProxmoxInfra(Infra):
                 teamName = poolName.removeprefix("SysSecTeam")
                 teamName = teamName[0:2]
                 if teamName not in sysSecTeams:
-                    sysSecTeams.append(teamName)
+                    sysSecTeams.append(int(teamName))
         
         teams = []
         for sysSecTeam in sysSecTeams:
@@ -56,13 +56,58 @@ class ProxmoxInfra(Infra):
         self._create_hidden_pool(team)
 
     def deleteTeam(self, team: Team):
-        self.proxmox.pools(f"SysSecTeam{team.team_number}").delete()
-        self.proxmox.pools(f"SysSecTeam{team.team_number}_hidden").delete()
+        self.proxmox.pools(self._get_pool_name(team)).delete()
+        self.proxmox.pools(f"{self._get_pool_name(team)}_hidden").delete()
+
+    def deploy_vm(self, team: Team, vmIdentifier: str):
+        '''
+        vmIdentifier is the id of the vm for proxmox
+        '''
+        vm = self._find_vm(vmIdentifier)
+        nextid = self.proxmox.cluster.nextid.get()
+
+        # TODO: THIS NEEDS TO BE CHANGED TO BE DYNAMIC
+        self.proxmox(f"nodes/cdr-vhost2/{self._get_vm_type(vm)}/{vm['vmid']}/clone").post(newid=nextid, name=vm['name'], pool=self._get_pool_name(team))
+
+    def _get_pool_name(self, team: Team):
+        name = "SysSecTeam"
+        print(team.team_number)
+        if(team.team_number <= 9):
+            name += '0'
+        name += str(team.team_number)
+
+    def _get_vm_type(self, vm):
+        try:
+            return vm['type']
+        except KeyError:
+            return 'qemu'
+
+    def _find_vm(self, vmIdentifier: str):
+        """
+        Search across all nodes in the Proxmox cluster for an LXC or QEMU with the given VMID.
+        Returns a dict with node + vm data if found, else None.
+        """
+        for node in self.proxmox.nodes.get():
+            node_name = node["node"]
+
+            # Check QEMU VMs
+            qemus = self.proxmox.nodes(node_name).qemu.get()
+            for vm in qemus:
+                if str(vm["vmid"]) == str(vmIdentifier):
+                    return vm
+
+            # Check LXC containers
+            lxcs = self.proxmox.nodes(node_name).lxc.get()
+            for vm in lxcs:
+                if str(vm["vmid"]) == str(vmIdentifier):
+                    return vm
+
+        return None
 
     def _get_student(self, student: Student):
         student = self.proxmox.access.users(f"{student.identifier}@pve").get()
         return student
-    
+
     def _get_team(self, team: Team):
         pool = self.proxmox.pools(f"SysSecTeam{team.team_number if team.team_number > 10 else '0' + str(team.team_number)}").get()
         return pool
