@@ -17,4 +17,4 @@ def deploy_vm_callback(host, username, password, vmid, realm="pve"):
 
     for team in teams:
         infra.deploy_vm(team, vmid)
-        break
+        # break
