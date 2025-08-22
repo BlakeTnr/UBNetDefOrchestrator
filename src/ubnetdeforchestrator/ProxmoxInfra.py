@@ -41,6 +41,7 @@ class ProxmoxInfra(Infra):
             if poolName.startswith("SysSecTeam"):
                 teamName = poolName.removeprefix("SysSecTeam")
                 teamName = teamName[0:2]
+                teamName = int(teamName)
                 if teamName not in sysSecTeams:
                     sysSecTeams.append(int(teamName))
         
