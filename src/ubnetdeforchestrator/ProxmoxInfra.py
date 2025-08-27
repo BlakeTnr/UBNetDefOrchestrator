@@ -14,7 +14,7 @@ class ProxmoxInfra(Infra):
             quit()
 
     def createStudent(self, student: Student, password: str=None):
-        self.proxmox.access.users.create(userid=f"{self.identifier}@pve", password=password)
+        self.proxmox.access.users.create(userid=f"{student.identifier}@pve", password=password, comment="SysSec Student Fall 2025")
 
     def _create_pool(self, team: Team):
             poolid = f"SysSecTeam{team.team_number}"
@@ -150,14 +150,18 @@ class ProxmoxInfra(Infra):
         return student
 
     def _get_team(self, team: Team):
-        pool = self.proxmox.pools(f"SysSecTeam{team.team_number if team.team_number > 10 else '0' + str(team.team_number)}").get()
+        pool = self.proxmox.pools(f"SysSecTeam{team.team_number if team.team_number >= 10 else '0' + str(team.team_number)}").get()
         return pool
 
     def assignStudentToTeam(self, student: Student, team: Team):
+
         proxmoxTeam = self._get_team(team)
 
         self.proxmox.access.acl.put(
-            path=f"/pool/SysSecTeam{team.team_number if team.team_number > 10 else '0' + str(team.team_number)}",   # path to pool
+            path=f"/pool/SysSecTeam{team.team_number if team.team_number >= 10 else '0' + str(team.team_number)}",   # path to pool
             users=f"{student.identifier}@pve",       # user
             roles="SysSec"      # role to assign
         )
+
+    def updateNetwork():
+        pass

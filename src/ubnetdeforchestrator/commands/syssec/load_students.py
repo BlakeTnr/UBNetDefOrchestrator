@@ -22,14 +22,14 @@ def load_students_callback(host, username, password, csvpath, mattermosturl, mat
     teamStudentMappings = process_team_csv(csvpath)
     
     for teamStudentMapping in teamStudentMappings:
-        print(teamStudentMapping)
         team = teamStudentMapping[0]
         student = teamStudentMapping[1]
-        password = generate_password()
+        password = generate_password(length=8)
         infra.createStudent(student, password)
-        _notify_student(mattermosturl, mattermostusername, mattermostpassword, student, password)
+        # _notify_student(mattermosturl, mattermostusername, mattermostpassword, student, password)
         
         infra.assignStudentToTeam(student, team)
+        print(f":white_check_mark: {student.identifier}:{password} assigned to {team.team_number}")
 
 def _notify_student(mattermostUrl, mattermostUsername, mattermostPassword, student: Student, studentPassword):
     mattermost = Driver({
