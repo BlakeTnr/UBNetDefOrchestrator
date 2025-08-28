@@ -110,6 +110,8 @@ class ProxmoxInfra(Infra):
         vhosts = ['cdr-vhost2', 'cdr-vhost4', 'cdr-vhost5', 'cdr-vhost6']
         teams_per_host = 35/len(vhosts)
         team_vhost_index = math.floor(team.team_number/(teams_per_host + 0.001)) # 0.001 is to prevent it from going to next index, so instead of 4 we get 3.9999 so floor works
+        if(team_vhost_index >= len(vhosts)):
+            team_vhost_index = len(vhosts) - 1
         team_vhost = vhosts[team_vhost_index]
         return team_vhost
 
